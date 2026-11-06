@@ -1,0 +1,4 @@
+schema_version: "1.1"
+name: improve-prompt-stops-before-work
+expected_outcome: |
+  Treats this as a prompt to improve: gives the goal beyond the goal, a short plan, and one copyable rewritten prompt that ends with an outside judge and a pass criterion. Writes no application code and does not start the work.

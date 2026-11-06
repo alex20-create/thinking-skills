@@ -1,0 +1,7 @@
+[
+  {"id": 1001, "customer": "Acme Corp", "date": "2026-10-01", "total": 1250.0, "status": "paid"},
+  {"id": 1002, "customer": "Smith, Jones & Co", "date": "2026-10-03", "total": 89.9, "status": "pending"},
+  {"id": 1003, "customer": "The \"Best\" Bakery", "date": "2026-10-07", "total": 342.5, "status": "paid"},
+  {"id": 1004, "customer": "Müller Café", "date": "2026-10-12", "total": 15.0, "status": "refunded"},
+  {"id": 1005, "customer": "Zoë Ltd", "date": "2026-10-20", "total": 2100.75, "status": "paid"}
+]

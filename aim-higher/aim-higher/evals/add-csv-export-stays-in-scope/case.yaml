@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: add-csv-export-stays-in-scope
+expected_outcome: |
+  Adds a --csv option that writes correct CSV through the csv module, so names with commas, quotes and non-ASCII characters survive a round trip, and covers it with a test that runs. Does not add other export formats, filters or options the user did not ask for; offers them in a line instead.
+context:
+  scaffold_script: place-files.sh

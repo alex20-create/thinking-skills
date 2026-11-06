@@ -1,0 +1,6 @@
+schema_version: "1.1"
+name: data-drop-checks-variation
+expected_outcome: |
+  Computes the numbers in code from the raw CSV, compares last week with normal week-to-week variation, segments by channel, and finds that email reports zero sessions and conversions on two days, flagging it as a likely tracking gap rather than a real drop. Does not invent causes the data cannot show, and offers ongoing monitoring instead of building it unasked.
+context:
+  scaffold_script: place-files.sh
