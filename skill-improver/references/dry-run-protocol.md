@@ -18,31 +18,54 @@ Run it through the subagent-dispatch tool (Task or Agent, whichever this
 session has), type general-purpose. Some dispatch tools run only in the
 background and notify on completion; either way, wait for the report before
 touching the skill. Do not use a fork or any context-inheriting variant:
-inherited context is exactly what the test must exclude. Clean is relative, though: a dispatched subagent still inherits
-the user's CLAUDE.md files, which may describe the skill under test - its
-local map above all. Rule 4 of the dispatch template turns that leakage
-into findings instead of silent help.
+inherited context is exactly what the test must exclude. Clean is relative,
+though: a dispatched subagent still inherits the user's CLAUDE.md files,
+which may describe the skill under test - its local map above all. Rule 4
+of the dispatch template turns that leakage into findings instead of
+silent help.
 
 ## Cost, stated first
 
 State the price before launching, every time. Reference figure: ~120k tokens
 per pass, measured on the author's machine in 2026-11 against a mid-sized
 skill (a SKILL.md plus one catalogue reference); a larger skill or a chattier
-model moves it. On a machine's first run there is no local figure yet: use
-the reference figure as the estimate and say whose it is. After each run,
-note the real cost where the tool reports one and use it for the next
-estimate; a figure that must outlive this session goes in this skill's own
-local map (step 5 of SKILL.md), the one place later sessions look. The
+model moves it. A second measurement on the same machine in 2026-11 (a
+SKILL.md plus two references, stopped at the target's first confirmation)
+came to ~122k, so the figure holds across mid-sized skills; the same
+scenario run again after the subagent was told to read a failed run's
+leftovers came to ~152k, so a scenario that follows a reported failure
+costs more. Look in this
+skill's own local map (step 5 of SKILL.md) first: a figure measured there
+wins. When the map holds none, use the reference figure as the estimate and
+say whose it is. After each run, note the real cost where the tool reports
+one and use it for the next estimate; a figure that must outlive this
+session goes in that local map, the one place later sessions look. The
 user's answer to the price may be "not now" - then the dry run simply
 becomes the pending step, and say so.
 
 ## Scenario design
 
-Build one realistic scenario from the skill's own trigger phrases: the user
-message that would fire the skill, plus the state the skill expects to find.
-Realistic means concrete - actual-looking paths, a plausible session history
+When the user reported a failure, the scenario reproduces that run: the
+project it ran on, the message that started it, and the point where it went
+wrong. Otherwise build one realistic scenario from the skill's own trigger
+phrases, or from one of its evals if it ships any: the user message that
+would fire the skill, plus the state the skill expects to find. Realistic
+means concrete - actual-looking paths, a plausible session history
 summarized in two lines, the kind of loose phrasing users actually type - not
 a textbook restatement of the skill's description.
+
+Choose the stopping point on purpose. By default the subagent stops at the
+skill's first plan-or-confirmation step, which tests scoping and setup and
+nothing after it. When the behaviour under test lies past that step - the
+reported failure was in the findings, the output, a later phase - name a
+later stopping point in the scenario and say which confirmations to treat
+as granted; rule 1 still holds, so every write past that point becomes a
+record. When the real project already holds state from an earlier run (a
+saved report, a checkpoint), say whether the subagent should take the
+skill's resume path or the fresh one; both are paths worth testing, but not
+in the same pass. Rule 1 forbids moving that state aside, so for the fresh
+path tell the subagent to treat it as absent and record each place it would
+have changed what the skill did.
 
 The scenario must give the subagent enough world to act in, and no more. If
 the skill expects to discover installed tools, do not list them in the
@@ -74,9 +97,12 @@ Follow the skill exactly as written, under these rules:
    install, or run anything that changes state. If the skill orders a
    write, record what you would have written and move on.
 2. STOP AT THE PLAN. Follow the skill up to its plan-or-confirmation step
-   and stop there. If the skill has no such step, stop immediately before
-   its first side effect. Do not ask the user anything; where the skill
-   would ask, record the question you would have asked.
+   and stop there - unless the scenario names a later stopping point; then
+   treat the confirmations it lists as granted and go on to that point,
+   still under rule 1. If the skill has no such step, stop immediately
+   before its first side effect. Do not ask the user anything; where the
+   skill would ask, record the question you would have asked. Do not
+   dispatch subagents of your own.
 3. NO GAP-FILLING WITHOUT A RECORD. Whenever the skill assumes something
    you do not know, or you must invent a value to continue, invent the
    minimum - and record it.

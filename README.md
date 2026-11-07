@@ -17,6 +17,12 @@
 | `aim-higher/` | The skill, its evals |
 | `skill-improver/` | The skill |
 
+## Install
+
+Copy the skill's own folder, not the repository, into your skills directory: `aim-higher/` or `skill-improver/` to `~/.claude/skills/`. Leave `evals/` behind if you only want to run the skill. On machines that install by copy rather than symlink, copy again after every change to the source; an edit made inside the installed folder is lost on the next copy.
+
+For claude.ai, zip the skill's folder (without `evals/`) and upload it as a skill.
+
 ## License
 
 MIT, see [LICENSE](LICENSE).

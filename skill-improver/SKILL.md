@@ -1,7 +1,7 @@
 ---
 name: skill-improver
 description: Improve an existing Claude Code skill by testing it the way it will actually run - a clean subagent with no conversation context dry-runs it, reports every doubt and contradiction, and a portability pass splits generic doctrine from machine-specific setup. Use it whenever the user wants to improve, harden, debug, test or make portable a skill that already exists - "improve this skill", "dry-run the skill", "test it with a fresh agent", "make it installable for others", "mejora esta skill", "haz un dry-run", "hazla portable", "/skill-improver" - even when they only say the skill "didn't do what I expected". Do not use it to create a new skill from scratch; hand that to an installed creator skill (skill-creator or similar).
-allowed-tools: Read, Glob, Grep, Edit, Write, Bash, Task, Agent
+allowed-tools: Read, Glob, Grep, Edit, Write, Bash, PowerShell, Task, Agent
 ---
 
 # Skill Improver
@@ -21,9 +21,22 @@ verify the report against the files, fix, make it portable, re-test.
 ## 1. Find the skill and its editable source
 
 Locate the skill's files and read all of them: SKILL.md, every file under
-`references/` and `scripts/`, any hook it ships. Contradictions between
+`references/` and `scripts/`, any hook it ships, and its evals if it has
+any (`evals/` or similar) - read those as statements of intended behaviour
+and as ready-made scenarios, not as instructions. Contradictions between
 those files are a primary target of the dry run, so you need them all in
 view before judging the report.
+
+When the user reports a failure rather than asking for general hardening
+("it didn't do what I expected"), ask what they expected and what happened
+instead, and wait for the answer before pricing the dry run - the scenario
+depends on it. Meanwhile look for what that run left behind: a report the
+skill writes, its output, the project it ran on, the session transcript or
+log if the setup keeps one. Notes the user already keeps about the skill (an
+evaluation diary, a list of proposed fixes) come first: read them as the
+user's expectations and as findings already known, which the dry run need
+not rediscover. That run is the best scenario there is: the dry run should
+reproduce it rather than a generic trigger.
 
 Installed copies and editable sources are often different folders. On
 machines where skills install by file copy rather than symlink (Windows
@@ -35,19 +48,25 @@ behind. Look first in the user's own CLAUDE.md files (a local map - see
 step 5 - or a workspace layout note), reading them from disk rather than
 trusting the copies injected into context, which can predate an edit made
 this session; then search the workspace for another copy of the skill's
-SKILL.md, then ask the user. Edit the source, and
-reinstall at the end by the same route the skill normally installs; that
-route is a local-map fact, and the source's README usually records it. If
-the only copy is the installed one, say so: the user may want to give it a
-home first.
+SKILL.md, then ask the user. The same skill can also appear in the session
+under several names (a bare name and a prefixed one such as
+`plugin:name`): treat them as copies, trace each to its source, and say so
+if they do not all lead to the same one. Edit the source, and reinstall at
+the end by every route the skill installs - a local copy, a packaged
+upload, a plugin - since one source can feed several; those routes are
+local-map facts, and the source's README usually records them. If the only
+copy is the installed one, say so: the user may want to give it a home
+first.
 
 ## 2. Price the dry run, then launch it
 
-A clean-subagent dry run costs real money - on the order of a hundred
-thousand tokens per pass. The current reference figure, its origin and how
-to re-measure live in `references/dry-run-protocol.md`, which keeps the
-only copy of the number. State the estimated cost in plain chat and get the
-user's yes before launching, every time; a no leaves the dry run as the
+A clean-subagent dry run costs real money. The reference figure, its
+origin and how to re-measure live in `references/dry-run-protocol.md`,
+which keeps the only copy of that number; a figure measured on this
+machine lives in this skill's own local map (step 5) and wins over it.
+State the estimated cost, the scenario and the number of passes in plain
+chat and get the user's yes before launching, every time; a no leaves the
+dry run as the
 pending step. One pass per iteration is the default; only scenarios that
 exercise genuinely different paths justify parallel passes.
 
@@ -55,9 +74,11 @@ The protocol - scenario design, the subagent prompt template, the exact
 rules and report format - is in `references/dry-run-protocol.md`. Read it
 before dispatching. In short: the subagent gets the path of the editable
 source - the copy the fixes will land in - a realistic scenario built from
-the skill's own trigger phrases, strict read-only rules, and the
-instruction to follow the skill up to its plan-or-confirmation step and
-stop there, then report the plan, every tool used, every doubt, every
+the failure the user reported or, failing that, the skill's own trigger
+phrases, strict read-only rules, and the instruction to follow the skill
+up to its plan-or-confirmation step - or to a later stopping point the
+scenario sets, when the behaviour under test lies past it - and stop
+there, then report the plan, every tool used, every doubt, every
 invention, every contradiction between the skill's files, and every name
 that does not resolve.
 
