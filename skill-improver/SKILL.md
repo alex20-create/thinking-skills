@@ -44,10 +44,11 @@ installs commonly do), an edit inside the installed folder dies on the next
 upgrade or reinstall. Find where the source of truth lives - a repository,
 a templates folder, a plugin checkout. The installed copy rarely says: an
 install route often copies only the skill subfolder and leaves the README
-behind. Look first in the user's own CLAUDE.md files (a local map - see
-step 5 - or a workspace layout note), reading them from disk rather than
-trusting the copies injected into context, which can predate an edit made
-this session; then search the workspace for another copy of the skill's
+behind. Look first in the user's own CLAUDE.md files (a pointer to a local
+map - see step 5 - or a workspace layout note) and in the map file they
+point to, reading both from disk rather than trusting the copies injected
+into context, which can predate an edit made this session; then search the
+workspace for another copy of the skill's
 SKILL.md, then ask the user. The same skill can also appear in the session
 under several names (a bare name and a prefixed one such as
 `plugin:name`): treat them as copies, trace each to its source, and say so
@@ -135,19 +136,27 @@ on their machine. Split the content in two:
   categories, the patterns, worked examples. Where the author's own setup
   appears as an example, label it as exactly that - a worked example, not
   the expected state.
-- **Machine-specific facts** move to a **local map**: a section in the
-  user's own CLAUDE.md (global or project) or claude.ai Project
-  instructions, named after the skill, holding the paths, installed-tool
-  names, quirks and choices of that machine. The skill reads its local map
-  first; when one exists it replaces discovery, and when none exists the
-  skill falls back to discovering and may offer to write the map. The map
-  survives skill upgrades because it lives outside the skill's folder -
-  that is the whole point on copy-installed machines. claude.ai reads no
-  CLAUDE.md: there the map goes in Project instructions or the user's
-  preferences, or in a `Local map for this install` section added to the
-  packaged copy of SKILL.md before upload (never to the source), keeping
-  only what makes sense without a disk. When the skill under repair has a
-  local map, teach it to recognise that section too.
+- **Machine-specific facts** move to a **local map**: a file of the user's
+  own, named after the skill and kept outside the skill's folder, holding
+  the paths, installed-tool names, quirks and choices of that machine. The
+  user's standing instructions carry only a pointer to it: one line in
+  their CLAUDE.md (global or project) naming the folder where local maps
+  are kept, or a short section named after the skill that names the file.
+  The map's content stays out of CLAUDE.md, which loads whole into every
+  session, including the ones that never run the skill. The skill reads its
+  local map first, following the pointer and reading the file from disk;
+  when one exists it replaces discovery, and when none exists the skill
+  falls back to discovering and may offer to write the map: the file, plus
+  the one-line pointer when the instructions have none yet. Teach the skill
+  to accept the older form too, a section that holds the whole map, and to
+  offer once to move it to a file. The map survives skill upgrades because
+  it lives outside the skill's folder - that is the whole point on
+  copy-installed machines. claude.ai reads no CLAUDE.md: there the map goes
+  in Project instructions or the user's preferences, or in a `Local map for
+  this install` section added to the packaged copy of SKILL.md before
+  upload (never to the source), keeping only what makes sense without a
+  disk. When the skill under repair has a local map, teach it to recognise
+  that section too.
 
 Measured numbers need a lifecycle note. A token cost or timing measured on
 the author's machine is honest only with its origin attached ("measured on
