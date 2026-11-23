@@ -20,7 +20,7 @@ background and notify on completion; either way, wait for the report before
 touching the skill. Do not use a fork or any context-inheriting variant:
 inherited context is exactly what the test must exclude. Clean is relative,
 though: a dispatched subagent still inherits the user's CLAUDE.md files,
-which may describe the skill under test - its local map above all. Rule 4
+which may describe the skill under test or point to its local map. Rule 4
 of the dispatch template turns that leakage into findings instead of
 silent help.
 
@@ -107,9 +107,10 @@ Follow the skill exactly as written, under these rules:
    you do not know, or you must invent a value to continue, invent the
    minimum - and record it.
 4. IGNORE WHAT YOU ALREADY KNOW. Your own system context (CLAUDE.md
-   files, memory) may mention the skill under test - a local map, setup
-   notes. Treat those sections as absent while following the skill, and
-   record each place where they would have filled a gap.
+   files, memory) may mention the skill under test - a local map or a
+   pointer to one, setup notes. Treat those sections as absent while
+   following the skill, do not open a file they point to, and record each
+   place where they would have filled a gap.
 
 Then report, in this order:
 
